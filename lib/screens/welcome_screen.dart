@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:tasky/screens/home_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -50,10 +51,44 @@ class WelcomeScreen extends StatelessWidget {
               height: 204,
             ),
             SizedBox(height: 28),
-
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Full Name",
+                    style: TextStyle(fontSize: 18, color: Color(0xffFFFCFC)),
+                  ),
+                  SizedBox(height: 8),
+                  TextFormField(
+                    cursorColor: Colors.white,
+                    style: TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      hintText: "e.g. Sarah Khalid",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide.none,
+                      ),
+                      filled: true,
+                      fillColor: Color(0xff282828),
+                      hintStyle: TextStyle(
+                        color: Color(0xff6D6D6D),
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
             SizedBox(height: 24),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                );
+              },
               style: ElevatedButton.styleFrom(
                 fixedSize: Size(345, 40),
                 foregroundColor: Color(0xffFFFCFC),
