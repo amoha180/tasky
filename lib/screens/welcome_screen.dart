@@ -1,14 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tasky/screens/home_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
-   WelcomeScreen({super.key});
+  WelcomeScreen({super.key});
 
-   final TextEditingController _controller = TextEditingController();
-   final GlobalKey<FormState> _key = GlobalKey<FormState>();
-
+  final TextEditingController _controller = TextEditingController();
+  final GlobalKey<FormState> _key = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -65,15 +64,17 @@ class WelcomeScreen extends StatelessWidget {
                     children: [
                       Text(
                         "Full Name",
-                        style: TextStyle(fontSize: 18, color: Color(0xffFFFCFC)),
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Color(0xffFFFCFC),
+                        ),
                       ),
                       SizedBox(height: 8),
                       TextFormField(
-                        validator: (String? value){
-                          if(value?.trim().isEmpty??false)
-                            {
-                              return "Please enter your name";
-                            }
+                        validator: (String? value) {
+                          if (value?.trim().isEmpty ?? false) {
+                            return "Please enter your name";
+                          }
                         },
                         controller: _controller,
                         cursorColor: Colors.white,
@@ -97,13 +98,15 @@ class WelcomeScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 24),
                 ElevatedButton(
-                  onPressed: () {
-                   if(_key.currentState?.validate()??false){
-                     Navigator.push(
-                       context,
-                       MaterialPageRoute(builder: (context) => HomeScreen()),
-                     );
-                   }
+                  onPressed: () async {
+                    if (_key.currentState?.validate() ?? false) {
+                      final pref = await SharedPreferences.getInstance();
+                      await pref.setString("username", _controller.value.text);
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => HomeScreen()),
+                      );
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     fixedSize: Size(345, 40),
