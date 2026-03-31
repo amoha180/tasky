@@ -4,7 +4,7 @@ import 'package:tasky/screens/welcome_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized(); //Need to understand
   final pref = await SharedPreferences.getInstance();
   String? username = pref.getString("username");
   runApp(MyApp(username: username));

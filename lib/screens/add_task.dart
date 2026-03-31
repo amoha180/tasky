@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tasky/Models/taskModel.dart';
 
 import 'home_screen.dart';
 
@@ -85,11 +89,6 @@ class _AddTaskState extends State<AddTask> {
                         ),
                         SizedBox(height: 8),
                         TextFormField(
-                          validator: (String? value) {
-                            if (value?.trim().isEmpty ?? false) {
-                              return "Please enter task description";
-                            }
-                          },
                           controller: taskDescriptionController,
                           maxLines: 5,
                           decoration: InputDecoration(
@@ -136,12 +135,25 @@ class _AddTaskState extends State<AddTask> {
                 ),
 
                 ElevatedButton.icon(
-                  onPressed: () {
+                  onPressed: () async {
+                    final pref = await SharedPreferences.getInstance();
                     if (newTaskKey.currentState?.validate() ?? false) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => HomeScreen()),
+                      final model = Taskmodel(
+                        taskName: taskNameController.text,
+                        taskDescription: taskDescriptionController.text,
+                        isHighPriority: isHighPriority,
                       );
+
+                      final taskjson = pref.getString("tasks");
+                      List<dynamic> listTaskes = [];
+                      if (taskjson != null) {
+                        listTaskes = jsonDecode(taskjson);
+                      }
+                      listTaskes.add(model.toJson());
+                      final listtaskencode = jsonEncode(listTaskes);
+                      await pref.setString("tasks", listtaskencode);
+                      print(listtaskencode);
+                     Navigator.of(context).pop();
                     }
                   },
                   label: Text(

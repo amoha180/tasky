@@ -80,7 +80,7 @@ class WelcomeScreen extends StatelessWidget {
                         cursorColor: Colors.white,
                         style: TextStyle(color: Colors.white),
                         decoration: InputDecoration(
-                          hintText: "e.g. Sarah Khalid",
+                          hintText: "e.g. Abdelrhman Maher",
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16),
                             borderSide: BorderSide.none,
