@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tasky/Models/taskModel.dart';
+import 'package:tasky/Widgets/tasks_list.dart';
 
 import 'add_task.dart';
 
@@ -16,7 +17,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String? username = "default";
-  List<Taskmodel> task = [];
+  List<Taskmodel> tasks = [];
   bool isLoading = false;
 
   @override
@@ -36,43 +37,23 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       isLoading = true;
     });
-    await Future.delayed(Duration(seconds: 5));
     final pref = await SharedPreferences.getInstance();
     final finaltaske = pref.getString("tasks");
     if (finaltaske != null) {
       final taskdecodeafter = jsonDecode(finaltaske) as List<dynamic>;
       final tasks = taskdecodeafter.map((e) => Taskmodel.fromJson(e)).toList();
       setState(() {
-        task = tasks;
-        isLoading = false;
+        this.tasks = tasks;
       });
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: SizedBox(
-        height: 46,
-        width: 168,
-        child: FloatingActionButton.extended(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadiusGeometry.circular(25),
-          ),
-          label: Text("Add New Task"),
-          icon: Icon(Icons.add),
-          backgroundColor: Color(0xff15B86C),
-          foregroundColor: Color(0xffFFFCFC),
-          onPressed: () async {
-            await Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => AddTask()),
-            );
-            _loadtask();
-          },
-        ),
-      ),
-      backgroundColor: Color(0xff181818),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -161,104 +142,53 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-              if (task.isNotEmpty)
-                isLoading
+
+              Expanded(
+                child: isLoading
                     ? Center(
                         child: CircularProgressIndicator(
-                          color: Colors.white,
-                          backgroundColor: Colors.red,
+                          color: Color(0xff15B86C),
+                          backgroundColor: Colors.white,
                         ),
                       )
-                    : Expanded(
-                        child: ListView.builder(
-                          itemCount: task.length,
-                          padding: EdgeInsets.only(bottom: 40),
-                          itemBuilder: (context, index) => Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Container(
-                              alignment: Alignment.center,
-                              height: 56,
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: Color(0xff282828),
-                              ),
-                              child: Row(
-                                children: [
-                                  Checkbox(
-                                    value: task[index].isDone,
-                                    onChanged: (bool? value) async {
-                                      setState(() {
-                                        task[index].isDone = value ?? false;
-                                      });
-                                      final pref =
-                                          await SharedPreferences.getInstance();
-                                      final updatedTaskes = task
-                                          .map((e) => e.toJson())
-                                          .toList();
-                                      pref.setString(
-                                        "tasks",
-                                        jsonEncode(updatedTaskes),
-                                      );
-                                    },
-                                    activeColor: Color(0xff15B86C),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadiusGeometry.circular(4),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          task[index].taskName,
-                                          style: TextStyle(
-                                            color: task[index].isDone
-                                                ? Color(0xffA0A0A0)
-                                                : Color(0xffFFFCFC),
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w400,
-                                            decoration: task[index].isDone
-                                                ? TextDecoration.lineThrough
-                                                : TextDecoration.none,
-                                          ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        Text(
-                                          task[index].taskDescription,
-                                          style: TextStyle(
-                                            color: task[index].isDone
-                                                ? Color(0xffA0A0A0)
-                                                : Color(0xffFFFCFC),
-                                            fontSize: 14,
-                                            decoration: task[index].isDone
-                                                ? TextDecoration.lineThrough
-                                                : TextDecoration.none,
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  IconButton(
-                                    onPressed: () {},
-                                    icon: Icon(Icons.more_vert),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
+                    : TasksListWidget(
+                        tasks: tasks,
+                        ontap: (bool? value, int? index) async {
+                          setState(() {
+                            tasks[index!].isDone = value ?? false;
+                          });
+                          final pref = await SharedPreferences.getInstance();
+                          final updatedTaskes = tasks
+                              .map((e) => e.toJson())
+                              .toList();
+                          pref.setString("tasks", jsonEncode(updatedTaskes));
+                        }, emptymessage: 'No Data',
                       ),
+              ),
             ],
           ),
+        ),
+      ),
+      floatingActionButton: SizedBox(
+        height: 46,
+        width: 168,
+        child: FloatingActionButton.extended(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadiusGeometry.circular(25),
+          ),
+          label: Text("Add New Task"),
+          icon: Icon(Icons.add),
+          backgroundColor: Color(0xff15B86C),
+          foregroundColor: Color(0xffFFFCFC),
+          onPressed: () async {
+            final bool result = await Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => AddTask()),
+            );
+            if (result != null && result) {
+              _loadtask();
+            }
+          },
         ),
       ),
     );

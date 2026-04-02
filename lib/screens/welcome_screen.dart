@@ -3,6 +3,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tasky/screens/home_screen.dart';
 
+import 'main_screen.dart';
+
 class WelcomeScreen extends StatelessWidget {
   WelcomeScreen({super.key});
 
@@ -104,7 +106,7 @@ class WelcomeScreen extends StatelessWidget {
                       await pref.setString("username", _controller.value.text);
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => HomeScreen()),
+                        MaterialPageRoute(builder: (context) => MainScreen()),
                       );
                     }
                   },

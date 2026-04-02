@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tasky/screens/home_screen.dart';
+import 'package:tasky/screens/main_screen.dart';
 import 'package:tasky/screens/welcome_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -19,9 +20,22 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData.dark(),
+      theme: ThemeData(
+        scaffoldBackgroundColor: Color(0xff181818),
+        appBarTheme: AppBarTheme(
+          data: AppBarThemeData(
+            iconTheme: IconThemeData(color: Color(0xffFFFCFC)),
+            backgroundColor: Color(0xff181818),
+            titleTextStyle: TextStyle(
+              color: Color(0xffFFFCFC),
+              fontSize: 20,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ),
+      ),
       debugShowCheckedModeBanner: false,
-      home: username == null ? WelcomeScreen() : HomeScreen(),
+      home: username == null ? WelcomeScreen() : MainScreen(),
     );
   }
 }

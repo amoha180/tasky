@@ -25,17 +25,7 @@ class _AddTaskState extends State<AddTask> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: Color(0xffFFFCFC)),
-        title: Text(
-          "New task",
-          style: TextStyle(
-            color: Color(0xffFFFCFC),
-            fontSize: 20,
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-      ),
+      appBar: AppBar(title: Text("New task")),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
@@ -153,7 +143,7 @@ class _AddTaskState extends State<AddTask> {
                       final listtaskencode = jsonEncode(listTaskes);
                       await pref.setString("tasks", listtaskencode);
                       print(listtaskencode);
-                     Navigator.of(context).pop();
+                      Navigator.of(context).pop(true);
                     }
                   },
                   label: Text(
